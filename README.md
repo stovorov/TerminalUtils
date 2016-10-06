@@ -1,6 +1,6 @@
 # TerminalUtils
 
-https://travis-ci.org/stovorov/TerminalUtils.svg?branch=master
+|Build-Status| 
 
 This library is collections of some useful functionalities I used while working a lot with unix terminal.
 These includes:
@@ -9,3 +9,5 @@ These includes:
 2. colored printing 
 3. quick redirection of std_out to file
 4. simple logging function for profiling functions calls
+
+.. |Build-Status| image:: https://travis-ci.org/stovorov/TerminalUtils.svg?branch=master
