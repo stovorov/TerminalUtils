@@ -403,7 +403,7 @@ def c_print_py2x(text):
 	>>c_print('some text <g> this will be colored green </g>')
 	>>c_print('some text <b> this will be colored blue </b>')
 	"""
-	
+
 	abb_dict = {'bk': 'black', 'r': 'red', 'g': 'green', 'o': 'orange', 'b': 'blue', 'p': 'purple'}
 	abb_dict.update({'c': 'cyan', 'y': 'yellow', 'pk': 'pink'})     # PEP8!
 	for abb, val in abb_dict.items():
