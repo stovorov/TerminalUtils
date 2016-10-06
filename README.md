@@ -1,5 +1,7 @@
 # TerminalUtils
 
+https://travis-ci.org/stovorov/TerminalUtils.svg?branch=master
+
 This library is collections of some useful functionalities I used while working a lot with unix terminal.
 These includes:
 
