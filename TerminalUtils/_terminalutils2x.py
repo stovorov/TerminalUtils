@@ -27,7 +27,6 @@ class ProgressBarPy2x(object):
 
 	Add in ``for`` loop together with iterable. Works for built-in types - tuples, lists, dicts, sets.
 
-
 	Usage:
 	------
 
@@ -35,19 +34,15 @@ class ProgressBarPy2x(object):
 	>>  ...
 	Progress: [||||||||||||||||||||||||||||||] 100.0%
 
-
 	When argument ``text`` is defined it will add text to particular progress bar:
-
 	>> for element in ProgressBar([1, 2, 3, 4, 5], text='Analysing'):
 	>>	...
 	Progress: [||||||||||||||||||||||||||||||] 100.0%       |	Analysing
-
 
 	Custom setup:
 	-------------
 
 	Use ``ProgressBar.setup()`` for setting custom parameters for progress bar. Currently 3 options are possible:
-
 		1. len              - use to define length of bar. Default=30
 		2. progress_style   - use to define sign of a progress. Default="|"
 		3. left_style       - use to define sing of regression of remaining elements. Default="-"
@@ -405,12 +400,10 @@ def c_print_py2x(text):
 	======
 
 	>>c_print('some text <r> this will be colored red </r>')
-
 	>>c_print('some text <g> this will be colored green </g>')
-
 	>>c_print('some text <b> this will be colored blue </b>')
-
 	"""
+	
 	abb_dict = {'bk': 'black', 'r': 'red', 'g': 'green', 'o': 'orange', 'b': 'blue', 'p': 'purple'}
 	abb_dict.update({'c': 'cyan', 'y': 'yellow', 'pk': 'pink'})     # PEP8!
 	for abb, val in abb_dict.items():
