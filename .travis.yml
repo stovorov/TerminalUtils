@@ -7,3 +7,4 @@ script: python tests/launch_all_unit_tests.py
 branches:
   only:
     - master
+codecov
