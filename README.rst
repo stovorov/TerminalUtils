@@ -10,6 +10,7 @@ These includes:
 2. colored printing 
 3. quick redirection of std_out to file
 4. simple logging for profiling functions calls
+5. simple tabular printing of containers
 
 Tested for Python 2.6 and 2.7. Python 3.x is currently unsupported.
 
