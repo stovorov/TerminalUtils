@@ -477,7 +477,7 @@ class Printer(object):
 			err = 'Container not supported, please use for tuple, list, dict, set or any other __iter__'
 			raise NotImplementedError(err)
 
-		if issubclass(typ, list):
+		if issubclass(typ, list) or issubclass(typ, tuple) or issubclass(typ, set):
 			write('\n')
 			header_str = '{0:^12} ->  {1:<14} {2:<12}\n\n'.format('index', 'type', 'value')
 			write(header_str)
@@ -501,3 +501,6 @@ class Printer(object):
 				lin_str = self._limit_line_len(lin_str)
 				write(lin_str)
 			write('\n')
+
+		else:
+			pass
