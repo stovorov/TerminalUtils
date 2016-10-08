@@ -19,7 +19,6 @@ import re
 import sys
 import weakref
 
-import pprint
 
 class ProgressBarPy2x(object):
 	"""
@@ -480,25 +479,25 @@ class Printer(object):
 
 		if issubclass(typ, list):
 			write('\n')
-			header_str = '{0:^10} -> {1:^10} {2:<12}\n\n'.format('index', 'type', 'value')
+			header_str = '{0:^12} ->  {1:<14} {2:<12}\n\n'.format('index', 'type', 'value')
 			write(header_str)
 			for ind, element in enumerate(iterable):
 				tp = type(element).__name__
 				if isinstance(element, list) or isinstance(element, tuple):
 					element = ', '.join([str(x) for x in element])
-				lin_str = '{0:^10} -> {1:^10} \t {2:<10}\n'.format(str(ind), tp, str(element))
+				lin_str = '{0:^12} ->  {1:<14} {2:<12}\n'.format(str(ind), tp, str(element))
 				lin_str = self._limit_line_len(lin_str)
 				write(lin_str)
 			write('\n')
 
 		elif issubclass(typ, dict):
-			header_str = '{0:^10} -> {1:^10} {2:<10}\n\n'.format('key', 'type', 'value')
+			header_str = '{0:^12} ->  {1:<14} {2:<12}\n\n'.format('key', 'type', 'value')
 			write(header_str)
 			for key, val in iterable.items():
 				tp = type(val).__name__
 				if isinstance(val, list) or isinstance(val, tuple):
 					val = ', '.join([str(x) for x in val])
-				lin_str = '{0:^10} -> {1:^10} {2:^10}\n'.format(str(key), tp, str(val))
+				lin_str = '{0:^12} ->  {1:<14} {2:<12}\n'.format(str(key), tp, str(val))
 				lin_str = self._limit_line_len(lin_str)
 				write(lin_str)
 			write('\n')
