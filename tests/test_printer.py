@@ -40,6 +40,14 @@ class TestProgressBar(unittest.TestCase):
 		test_list = [[1, 2, 'b', 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8], ['c', 5, 8], [5, 1, 4]]
 		tprint(test_list)
 
+	def test_tuple(self):
+		test_tuple = (1, 2, 3, 4, 5)
+		tprint(test_tuple)
+
+	def test_tuple2(self):
+		test_tuple = ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], [0, 2, 3, 4], [1, 2, 3, 4, 5, 6, 7, 8, 9])
+		tprint(test_tuple)
+
 	def test_dict(self):
 		test_dict = {'A-key': '100', 'B-key': '200', 'C-key': (1, 2), 'D-key': '150'}
 		tprint(test_dict)
@@ -49,6 +57,15 @@ class TestProgressBar(unittest.TestCase):
 		             'B-key': '200', 'C-key': (1, 2), 'D-key': '150'}
 		tprint(test_dict)
 
+	def test_set(self):
+		test_list = [6, 6, 7, 8, 9, 10, 11]
+		test_set = set(test_list)
+		tprint(test_set)
+
+	def test_set2(self):
+		test_list = [(6, 6, 7, 8, 9, 10, 11), (6, 6, 7, 8, 9, 10, 11), (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)]
+		test_set = set(test_list)
+		tprint(test_set)
 
 if __name__ == '__main__':
 	unittest.main()
