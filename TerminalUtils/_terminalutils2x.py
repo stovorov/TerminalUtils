@@ -445,9 +445,9 @@ def std_out2file_py2x(fn):
 	return wrapper
 
 
-def print_tab_py2x(iterable):
+def print_tab_py2x(iterable, stream=None):
 	""" Tab print object to stream function."""
-	printer = Printer()
+	printer = Printer(stream)
 	printer.show(iterable)
 
 
@@ -474,11 +474,13 @@ class Printer(object):
 		typ = type(iterable)
 		write = self._stream.write
 
-		if not filter(lambda arg: issubclass(typ, arg), self.primitive_containers) or hasattr(iterable, '__iter__') is False:
+		if not filter(lambda arg: issubclass(typ, arg), self.primitive_containers) and hasattr(iterable, '__iter__') is False:
 			err = 'Container not supported, please use for tuple, list, dict, set or any other __iter__'
 			raise NotImplementedError(err)
 
-		if issubclass(typ, list) or issubclass(typ, tuple) or issubclass(typ, set):
+		if issubclass(typ, list) or issubclass(typ, tuple) or issubclass(typ, set) or \
+			(issubclass(typ, dict) is False and hasattr(iterable, '__iter__')):
+
 			write('\n')
 			header_str = '{0:^12} ->  {1:<14} {2:<12}\n\n'.format('index', 'type', 'value')
 			write(header_str)
@@ -491,7 +493,7 @@ class Printer(object):
 				write(lin_str)
 			write('\n')
 
-		elif issubclass(typ, dict):
+		if issubclass(typ, dict):
 			header_str = '{0:^12} ->  {1:<14} {2:<12}\n\n'.format('key', 'type', 'value')
 			write(header_str)
 			for key, val in iterable.items():
@@ -502,6 +504,3 @@ class Printer(object):
 				lin_str = self._limit_line_len(lin_str)
 				write(lin_str)
 			write('\n')
-
-		else:
-			pass
