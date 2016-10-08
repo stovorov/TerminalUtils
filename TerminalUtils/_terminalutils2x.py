@@ -491,8 +491,8 @@ class Printer(object):
 				write(lin_str)
 			write('\n')
 
-		if issubclass(typ, dict):
-			header_str = '{0:^10} -> {1:^10} {2:^10}\n\n'.format('key', 'type', 'value')
+		elif issubclass(typ, dict):
+			header_str = '{0:^10} -> {1:^10} {2:<10}\n\n'.format('key', 'type', 'value')
 			write(header_str)
 			for key, val in iterable.items():
 				tp = type(val).__name__
