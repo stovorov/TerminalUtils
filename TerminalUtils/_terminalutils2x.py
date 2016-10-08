@@ -369,6 +369,7 @@ class GetFunctionStatsPy2x(object):
 
 
 class _ColorsMeta(type):
+	""" A meta class for _Colors class to make it possible to call _Colors[val] instead of _Colors.val"""
 	def __getitem__(cls, item):
 		return cls.__dict__[item]
 

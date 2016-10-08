@@ -24,11 +24,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="_terminalutils2x.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="_terminalutils2x.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/TerminalUtils/_terminalutils2x.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="9767" max-vertical-offset="10731">
-              <caret line="495" column="30" selection-start-line="495" selection-start-column="30" selection-end-line="495" selection-end-column="30" />
+            <state vertical-scroll-proportion="0.5083241" vertical-offset="7396" max-vertical-offset="10752">
+              <caret line="374" column="0" selection-start-line="374" selection-start-column="0" selection-end-line="374" selection-end-column="0" />
               <folding>
                 <element signature="e#371#384#0" expanded="true" />
               </folding>
@@ -36,10 +36,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test_printer.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="test_printer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tests/test_printer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8581081" vertical-offset="582" max-vertical-offset="1617">
+            <state vertical-scroll-proportion="0.0" vertical-offset="288" max-vertical-offset="1617">
               <caret line="64" column="24" selection-start-line="64" selection-start-column="24" selection-end-line="64" selection-end-column="24" />
               <folding>
                 <element signature="e#58#68#0" expanded="true" />
@@ -107,8 +107,8 @@
         <option value="$PROJECT_DIR$/tests/test_std_2out.py" />
         <option value="$PROJECT_DIR$/TerminalUtils/_terminalutils.py" />
         <option value="$PROJECT_DIR$/TerminalUtils/__init__.py" />
-        <option value="$PROJECT_DIR$/TerminalUtils/_terminalutils2x.py" />
         <option value="$PROJECT_DIR$/tests/test_printer.py" />
+        <option value="$PROJECT_DIR$/TerminalUtils/_terminalutils2x.py" />
       </list>
     </option>
   </component>
@@ -725,6 +725,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/tests/test_printer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="288" max-vertical-offset="1617">
+          <caret line="64" column="24" selection-start-line="64" selection-start-column="24" selection-end-line="64" selection-end-column="24" />
+          <folding>
+            <element signature="e#58#68#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file:///usr/lib64/python2.7/pprint.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="4940" max-vertical-offset="7539">
@@ -737,20 +747,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/TerminalUtils/_terminalutils2x.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="9767" max-vertical-offset="10731">
-          <caret line="495" column="30" selection-start-line="495" selection-start-column="30" selection-end-line="495" selection-end-column="30" />
+        <state vertical-scroll-proportion="0.5083241" vertical-offset="7396" max-vertical-offset="10752">
+          <caret line="374" column="0" selection-start-line="374" selection-start-column="0" selection-end-line="374" selection-end-column="0" />
           <folding>
             <element signature="e#371#384#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/test_printer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8581081" vertical-offset="582" max-vertical-offset="1617">
-          <caret line="64" column="24" selection-start-line="64" selection-start-column="24" selection-end-line="64" selection-end-column="24" />
-          <folding>
-            <element signature="e#58#68#0" expanded="true" />
           </folding>
         </state>
       </provider>
