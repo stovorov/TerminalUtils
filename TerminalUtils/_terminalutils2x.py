@@ -19,6 +19,7 @@ import re
 import sys
 import weakref
 
+import pprint
 
 class ProgressBarPy2x(object):
 	"""
@@ -444,5 +445,60 @@ def std_out2file_py2x(fn):
 	return wrapper
 
 
-def print_tab_py2x():
-	pass
+def print_tab_py2x(iterable):
+	""" Tab print object to stream function."""
+	printer = Printer()
+	printer.show(iterable)
+
+
+class Printer(object):
+	""" Prints iterable in tabular format. """
+	def __init__(self, stream=None):
+		if stream is not None:
+			self._stream = stream
+		else:
+			self._stream = sys.stdout
+		self._max_line_size = 80
+		self.primitive_containers = [tuple, list, dict, set]
+
+	def _limit_line_len(self, lin_str):
+		if len(lin_str) > self._max_line_size:
+			new_line = ''
+			for cha in lin_str:
+				if len(new_line) < self._max_line_size:
+					new_line += cha
+			lin_str = new_line + ' ...\n'
+		return lin_str
+
+	def show(self, iterable):
+		typ = type(iterable)
+		write = self._stream.write
+
+		if not filter(lambda arg: issubclass(typ, arg), self.primitive_containers) or hasattr(iterable, '__iter__') is False:
+			err = 'Container not supported, please use for tuple, list, dict, set or any other __iter__'
+			raise NotImplementedError(err)
+
+		if issubclass(typ, list):
+			write('\n')
+			header_str = '{0:^10} -> {1:^10} {2:<12}\n\n'.format('index', 'type', 'value')
+			write(header_str)
+			for ind, element in enumerate(iterable):
+				tp = type(element).__name__
+				if isinstance(element, list) or isinstance(element, tuple):
+					element = ', '.join([str(x) for x in element])
+				lin_str = '{0:^10} -> {1:^10} \t {2:<10}\n'.format(str(ind), tp, str(element))
+				lin_str = self._limit_line_len(lin_str)
+				write(lin_str)
+			write('\n')
+
+		if issubclass(typ, dict):
+			header_str = '{0:^10} -> {1:^10} {2:^10}\n\n'.format('key', 'type', 'value')
+			write(header_str)
+			for key, val in iterable.items():
+				tp = type(val).__name__
+				if isinstance(val, list) or isinstance(val, tuple):
+					val = ', '.join([str(x) for x in val])
+				lin_str = '{0:^10} -> {1:^10} {2:^10}\n'.format(str(key), tp, str(val))
+				lin_str = self._limit_line_len(lin_str)
+				write(lin_str)
+			write('\n')
