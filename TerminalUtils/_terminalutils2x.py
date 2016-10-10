@@ -18,6 +18,10 @@ import os
 import re
 import sys
 import weakref
+try:
+	import cStringIO as StringIO
+except ImportError:
+	import StringIO
 
 
 class ProgressBarPy2x(object):
@@ -411,7 +415,7 @@ def c_print_py2x(text):
 
 def std_out2file_py2x(fn):
 	"""
-	Redirect std_out and std_err from decorated function to file.
+	Redirect std_out and std_err from decorated function to file but still writes all data to output
 
 	USAGE:
 	======
@@ -430,17 +434,24 @@ def std_out2file_py2x(fn):
 		std_err_fil_name = fn.__name__ + '_stderr.txt'
 		old_stderr = sys.stderr
 		old_stdout = sys.stdout
-		sys.stdout = file(std_out_fil_name, 'w+')
-		sys.stderr = file(std_err_fil_name, 'w+')
+		sys.stdout = StringIO.StringIO()
+		sys.stderr = StringIO.StringIO()
 		try:
 			returned = fn(*args, **kwargs)
 		finally:
-			sys.stderr.close()
-			sys.stdout.close()
+			std_content = sys.stdout.getvalue()
+			err_content = sys.stderr.getvalue()
+			with open(std_out_fil_name, 'w+') as fil:
+				fil.write(std_content)
+			with open(std_err_fil_name, 'w+') as fil:
+				fil.write(err_content)
 		sys.stderr = old_stderr
 		sys.stdout = old_stdout
-		if os.path.getsize(std_err_fil_name) == 0:
-			os.remove(std_err_fil_name)
+		sys.stdout.write(std_content)
+		sys.stdout.write(err_content)
+		if os.path.exists(std_err_fil_name):
+			if os.path.getsize(std_err_fil_name) == 0:
+				os.remove(std_err_fil_name)
 		return returned
 	return wrapper
 
