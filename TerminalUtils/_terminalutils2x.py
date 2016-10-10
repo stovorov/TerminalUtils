@@ -449,7 +449,6 @@ def std_out2file_py2x(fn):
 		sys.stdout = old_stdout
 		sys.stdout.write(std_content)
 		sys.stdout.write(err_content)
-		
 		if os.path.exists(std_err_fil_name):
 			if os.path.getsize(std_err_fil_name) == 0:
 				os.remove(std_err_fil_name)
