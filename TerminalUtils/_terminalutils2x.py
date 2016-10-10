@@ -445,20 +445,26 @@ def std_out2file_py2x(fn):
 	return wrapper
 
 
-def print_tab_py2x(iterable, stream=None):
+def print_tab_py2x(iterable, stream=None, typed=True):
 	""" Tab print object to stream function."""
-	printer = Printer(stream)
+	printer = Printer(stream, typed)
 	printer.show(iterable)
 
 
 class Printer(object):
-	""" Prints iterable in tabular format. """
-	def __init__(self, stream=None):
+	"""
+	Prints iterable in tabular format.
+	Options:
+		stream=None     - sets output stream, by default stdout
+		typed=True      - turns on/of printing of element type in container.
+	"""
+	def __init__(self, stream=None, typed=True):
 		if stream is not None:
 			self._stream = stream
 		else:
 			self._stream = sys.stdout
 		self._max_line_size = 80
+		self._type = typed
 		self.primitive_containers = [tuple, list, dict, set]
 
 	def _limit_line_len(self, lin_str):
@@ -480,27 +486,39 @@ class Printer(object):
 
 		if issubclass(typ, list) or issubclass(typ, tuple) or issubclass(typ, set) or \
 			(issubclass(typ, dict) is False and hasattr(iterable, '__iter__')):
-
 			write('\n')
-			header_str = '{0:^12} ->  {1:<14} {2:<12}\n\n'.format('index', 'type', 'value')
+			if self._type:
+				header_str = '{0:^12} ->  {1:<14} {2:<12}\n\n'.format('index', 'type', 'value')
+			else:
+				header_str = '{0:^12} ->  {2:<12}\n\n'.format('index', 'value')
+
 			write(header_str)
 			for ind, element in enumerate(iterable):
 				tp = type(element).__name__
 				if isinstance(element, list) or isinstance(element, tuple):
 					element = ', '.join([str(x) for x in element])
-				lin_str = '{0:^12} ->  {1:<14} {2:<12}\n'.format(str(ind), tp, str(element))
+				if self._type:
+					lin_str = '{0:^12} ->  {1:<14} {2:<12}\n'.format(str(ind), tp, str(element))
+				else:
+					lin_str = '{0:^12} ->  {2:<12}\n'.format(str(ind), str(element))
 				lin_str = self._limit_line_len(lin_str)
 				write(lin_str)
 			write('\n')
 
 		if issubclass(typ, dict):
-			header_str = '{0:^12} ->  {1:<14} {2:<12}\n\n'.format('key', 'type', 'value')
+			if self._type:
+				header_str = '{0:^12} ->  {1:<14} {2:<12}\n\n'.format('key', 'type', 'value')
+			else:
+				header_str = '{0:^12} ->  {2:<12}\n\n'.format('key', 'value')
 			write(header_str)
 			for key, val in iterable.items():
 				tp = type(val).__name__
 				if isinstance(val, list) or isinstance(val, tuple):
 					val = ', '.join([str(x) for x in val])
-				lin_str = '{0:^12} ->  {1:<14} {2:<12}\n'.format(str(key), tp, str(val))
+				if self._type:
+					lin_str = '{0:^12} ->  {1:<14} {2:<12}\n'.format(str(key), tp, str(val))
+				else:
+					lin_str = '{0:^12} ->  {2:<12}\n'.format(str(key), str(val))
 				lin_str = self._limit_line_len(lin_str)
 				write(lin_str)
 			write('\n')
