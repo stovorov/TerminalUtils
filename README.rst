@@ -3,8 +3,8 @@ TerminalUtils
 
 |Build-Status| 
 
-This library is collections of some useful functionalities I used while working a lot with unix terminal.
-These includes:
+This library is a collection of some useful functionalities I needed while working a lot with unix terminal.
+It includes:
 
 1. progress bar
 2. colored printing 
