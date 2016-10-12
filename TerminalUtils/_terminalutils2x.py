@@ -456,9 +456,9 @@ def std_out2file_py2x(fn):
 	return wrapper
 
 
-def print_tab_py2x(iterable, stream=None, typed=True):
+def print_tab_py2x(iterable, stream=None, typed=True, ind_elem=None, attr_elem=None, line_len=100):
 	""" Tab print object to stream function."""
-	printer = Printer(stream, typed)
+	printer = Printer(stream, typed, ind_elem, attr_elem, line_len)
 	printer.show(iterable)
 
 
@@ -469,13 +469,15 @@ class Printer(object):
 		stream=None     - sets output stream, by default stdout
 		typed=True      - turns on/of printing of element type in container.
 	"""
-	def __init__(self, stream=None, typed=True):
+	def __init__(self, stream, typed, ind_elem, attr_elem, line_len):
 		if stream is not None:
 			self._stream = stream
 		else:
 			self._stream = sys.stdout
-		self._max_line_size = 80
+		self._max_line_size = line_len
 		self._type = typed
+		self.ind_elem = ind_elem
+		self.attr_elem = attr_elem
 		self.primitive_containers = [tuple, list, dict, set]
 
 	def _limit_line_len(self, lin_str):
@@ -491,45 +493,80 @@ class Printer(object):
 		typ = type(iterable)
 		write = self._stream.write
 
-		if not filter(lambda arg: issubclass(typ, arg), self.primitive_containers) and hasattr(iterable, '__iter__') is False:
+		if not filter(lambda arg: issubclass(typ, arg), self.primitive_containers) and \
+			hasattr(iterable, '__iter__') is False:
 			err = 'Container not supported, please use for tuple, list, dict, set or any other __iter__'
 			raise NotImplementedError(err)
 
 		if issubclass(typ, list) or issubclass(typ, tuple) or issubclass(typ, set) or \
 			(issubclass(typ, dict) is False and hasattr(iterable, '__iter__')):
+			tab_size = 12
 			write('\n')
+			ind = 'index'
+			val = 'value'
+			if self.ind_elem is not None:
+				ind = self.ind_elem
+				try:
+					max_t_size = max([len(getattr(x, self.ind_elem)) for x in iterable])
+				except AttributeError:
+					err = 'Could not find argument ' + str(self.ind_elem) + ' in iterable element.'
+					raise AttributeError(err)
+				if max_t_size > tab_size:
+					tab_size = max_t_size + 2
+			if self.attr_elem is not None:
+				val = self.attr_elem
 			if self._type:
-				header_str = '{0:^12} ->  {1:<14} {2:<12}\n\n'.format('index', 'type', 'value')
+				header_str = str('{0:>' + str(tab_size) + '}  ->  {1:<14} {2:<12}\n\n').format(ind, 'type', val)
 			else:
-				header_str = '{0:^12} ->  {2:<12}\n\n'.format('index', 'value')
+				header_str = str('{0:>' + str(tab_size) + '}  ->  {1:<12}\n\n').format(ind, val)
 
 			write(header_str)
-			for ind, element in enumerate(iterable):
+			for indx, elem in enumerate(iterable):
+				if self.ind_elem is None:
+					ind = indx
+				else:
+					try:
+						ind = getattr(elem, self.ind_elem)
+					except AttributeError:
+						err = 'Could not find argument ' + str(self.ind_elem) + ' in iterable element.'
+						raise AttributeError(err)
+				if self.attr_elem is None:
+					element = elem
+				else:
+					try:
+						element = getattr(elem, self.attr_elem)
+					except AttributeError:
+						err = 'Could not find argument ' + str(self.ind_elem) + ' in iterable element.'
+						raise AttributeError(err)
 				tp = type(element).__name__
 				if isinstance(element, list) or isinstance(element, tuple):
 					element = ', '.join([str(x) for x in element])
 				if self._type:
-					lin_str = '{0:^12} ->  {1:<14} {2:<12}\n'.format(str(ind), tp, str(element))
+					lin_str = str('{0:>' + str(tab_size) + '}  ->  {1:<14} {2:<12}\n').format(str(ind), tp, str(element))
 				else:
-					lin_str = '{0:^12} ->  {2:<12}\n'.format(str(ind), str(element))
+					lin_str = str('{0:>' + str(tab_size) + '}  ->  {1:<12}\n').format(str(ind), str(element))
 				lin_str = self._limit_line_len(lin_str)
 				write(lin_str)
 			write('\n')
 
 		if issubclass(typ, dict):
+			tab_size = 12
+			max_t_size = max([len(str(x)) for x in iterable])
+			if max_t_size > tab_size:
+				tab_size = max_t_size + 2
 			if self._type:
-				header_str = '{0:^12} ->  {1:<14} {2:<12}\n\n'.format('key', 'type', 'value')
+				header_str = str('{0:>' + str(tab_size) + '}  ->  {1:<14} {2:<12}\n\n').format('key', 'type', 'value')
 			else:
-				header_str = '{0:^12} ->  {2:<12}\n\n'.format('key', 'value')
+				header_str = str('{0:>' + str(tab_size) + '}  ->  {1:<12}\n\n').format('key', 'value')
 			write(header_str)
 			for key, val in iterable.items():
 				tp = type(val).__name__
 				if isinstance(val, list) or isinstance(val, tuple):
 					val = ', '.join([str(x) for x in val])
 				if self._type:
-					lin_str = '{0:^12} ->  {1:<14} {2:<12}\n'.format(str(key), tp, str(val))
+					lin_str = str('{0:>' + str(tab_size) + '}  ->  {1:<14} {2:<12}\n').format(str(key), tp, str(val))
 				else:
-					lin_str = '{0:^12} ->  {2:<12}\n'.format(str(key), str(val))
+					lin_str = str('{0:>' + str(tab_size) + '}  ->  {2:<12}\n').format(str(key), str(val))
 				lin_str = self._limit_line_len(lin_str)
 				write(lin_str)
 			write('\n')

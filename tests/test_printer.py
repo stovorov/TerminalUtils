@@ -3,6 +3,7 @@ Module contains unit tests for c_print function.
 """
 
 import sys
+import random
 import unittest
 from cStringIO import StringIO
 
@@ -24,6 +25,8 @@ class CustomContainer(object):
 	def __init__(self):
 		self.current = 0
 		self.stop = 10
+		self.val1 = ''
+		self.vak2 = ''
 
 	def __iter__(self):
 		return self
@@ -78,8 +81,8 @@ class TestProgressBar(unittest.TestCase):
 	def test_dict2(self):
 		test_dict = {'A-key': [1, 2, 'b', 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8],
 		             'B-key': '200', 'C-key': (1, 2), 'D-key': '150'}
-		out = StringIO()
-		tprint(test_dict, stream=out)
+		#out = StringIO()
+		tprint(test_dict)
 
 	def test_set(self):
 		test_list = [6, 6, 7, 8, 9, 10, 11]
@@ -94,8 +97,18 @@ class TestProgressBar(unittest.TestCase):
 		tprint(test_set, stream=out)
 
 	def test_custom_container(self):
-		test_container = CustomContainer()
-		tprint(test_container)
+		ob1 = CustomContainer()
+		ob2 = CustomContainer()
+		ob3 = CustomContainer()
+		ob1.val1 = 'aaa' * 5
+		ob1.val2 = 'bbb' * 6
+		ob2.val1 = 'dddd' * 4
+		ob2.val2 = 'cccc' * 5
+		ob3.val1 = 'ss' * 6
+		ob3.val2 = 'eee' * 4
+		test_container = [ob1, ob2, ob3]
+		tprint(test_container, typed=False, ind_elem='val1', attr_elem='val2')
+
 
 if __name__ == '__main__':
 	unittest.main()
