@@ -456,9 +456,9 @@ def std_out2file_py2x(fn):
 	return wrapper
 
 
-def print_tab_py2x(iterable, stream=None, typed=True, ind_elem=None, attr_elem=None, line_len=100):
+def print_tab_py2x(iterable, stream=None, typed=True, ind_elem=None, attr_elem=None, line_len=100, splitted=False):
 	""" Tab print object to stream function."""
-	printer = Printer(stream, typed, ind_elem, attr_elem, line_len)
+	printer = Printer(stream, typed, ind_elem, attr_elem, line_len, splitted)
 	printer.show(iterable)
 
 
@@ -469,15 +469,16 @@ class Printer(object):
 		stream=None     - sets output stream, by default stdout
 		typed=True      - turns on/of printing of element type in container.
 	"""
-	def __init__(self, stream, typed, ind_elem, attr_elem, line_len):
+	def __init__(self, stream, typed, ind_elem, attr_elem, line_len, splitted):
 		if stream is not None:
 			self._stream = stream
 		else:
 			self._stream = sys.stdout
 		self._max_line_size = line_len
 		self._type = typed
-		self.ind_elem = ind_elem
-		self.attr_elem = attr_elem
+		self._ind_elem = ind_elem
+		self._attr_elem = attr_elem
+		self._splitted = splitted
 		self.primitive_containers = [tuple, list, dict, set]
 
 	def _limit_line_len(self, lin_str):
@@ -504,17 +505,17 @@ class Printer(object):
 			write('\n')
 			ind = 'index'
 			val = 'value'
-			if self.ind_elem is not None:
-				ind = self.ind_elem
+			if self._ind_elem is not None:
+				ind = self._ind_elem
 				try:
-					max_t_size = max([len(getattr(x, self.ind_elem)) for x in iterable])
+					max_t_size = max([len(getattr(x, self._ind_elem)) for x in iterable])
 				except AttributeError:
-					err = 'Could not find argument ' + str(self.ind_elem) + ' in iterable element.'
+					err = 'Could not find argument ' + str(self._ind_elem) + ' in iterable element.'
 					raise AttributeError(err)
 				if max_t_size > tab_size:
 					tab_size = max_t_size + 2
-			if self.attr_elem is not None:
-				val = self.attr_elem
+			if self._attr_elem is not None:
+				val = self._attr_elem
 			if self._type:
 				header_str = str('{0:>' + str(tab_size) + '}  ->  {1:<14} {2:<12}\n\n').format(ind, 'type', val)
 			else:
@@ -522,21 +523,21 @@ class Printer(object):
 
 			write(header_str)
 			for indx, elem in enumerate(iterable):
-				if self.ind_elem is None:
+				if self._ind_elem is None:
 					ind = indx
 				else:
 					try:
-						ind = getattr(elem, self.ind_elem)
+						ind = getattr(elem, self._ind_elem)
 					except AttributeError:
-						err = 'Could not find argument ' + str(self.ind_elem) + ' in iterable element.'
+						err = 'Could not find argument ' + str(self._ind_elem) + ' in iterable element.'
 						raise AttributeError(err)
-				if self.attr_elem is None:
+				if self._attr_elem is None:
 					element = elem
 				else:
 					try:
-						element = getattr(elem, self.attr_elem)
+						element = getattr(elem, self._attr_elem)
 					except AttributeError:
-						err = 'Could not find argument ' + str(self.ind_elem) + ' in iterable element.'
+						err = 'Could not find argument ' + str(self._ind_elem) + ' in iterable element.'
 						raise AttributeError(err)
 				tp = type(element).__name__
 				if isinstance(element, list) or isinstance(element, tuple):
