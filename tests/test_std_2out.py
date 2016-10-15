@@ -11,11 +11,11 @@ from TerminalUtils import std_out2file
 
 
 class TestStd2OutFile(unittest.TestCase):
+    @std_out2file
+    def test_one(self):
+        print 'TEST'
+        print 'TEST2'
 
-	@std_out2file
-	def test_one(self):
-		print 'TEST'
-		print 'TEST2'
 
 if __name__ == '__main__':
-	unittest.main()
+    unittest.main()
