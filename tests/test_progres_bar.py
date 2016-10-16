@@ -44,6 +44,17 @@ class TestProgressBar(unittest.TestCase):
         self.assertEqual(Bar._bar_style_progress, "|")
         self.assertEqual(Bar._bar_style_left, '-')
 
+    def test_too_many_args(self):
+        err = 'Too many positional arguments for progress bar. Use only one iterable.'
+        with self.assertRaises(Exception) as context:
+            Bar([1, 2, 3], [2, 3, 4])
+        self.assertTrue(err in context.exception)
+
+    def test_setup_no_kwargs(self):
+        err = 'Please provide setup arguments only with keyword args.'
+        with self.assertRaises(Exception) as context:
+            Bar.setup(1)
+        self.assertTrue(err in context.exception)
 
 if __name__ == '__main__':
     unittest.main()

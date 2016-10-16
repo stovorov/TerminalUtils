@@ -13,16 +13,13 @@ import collections
 import functools
 import math
 import numbers
-import time
 import os
 import re
 import sys
+import time
 import weakref
 
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+import cStringIO as StringIO
 
 
 class ProgressBarPy2x(object):
@@ -66,29 +63,25 @@ class ProgressBarPy2x(object):
         if len(args) > 1:
             err = 'Too many positional arguments for progress bar. Use only one iterable.'
             raise AttributeError(err)
-        self.data = args[0]
-        self.index = 0
-        self.custom_text = ''
-        self.initial_elements = len(self.data)
-
-        if 'text' in kwargs:
+        self._data = args[0]
+        self._index = 0
+        self._initial_elements = len(self._data)
+        try:
             self.custom_text = '\t|\t' + kwargs['text'] + '\t'
-
-        if hasattr(self.data, '__iter__') is False:
-            # --- iterator mandatory!
-            raise TypeError
+        except KeyError:
+            self.custom_text = ''
 
     def __iter__(self):
         return self
 
     def next(self):
         try:
-            if isinstance(self.data, list) or isinstance(self.data, tuple):
-                res = self.data[self.index]
-            elif isinstance(self.data, dict):
-                res = self.data.keys()[self.index]
-            elif isinstance(self.data, set):
-                res = list(self.data)[self.index]
+            if isinstance(self._data, list) or isinstance(self._data, tuple):
+                res = self._data[self._index]
+            elif isinstance(self._data, dict):
+                res = self._data.keys()[self._index]
+            elif isinstance(self._data, set):
+                res = list(self._data)[self._index]
             else:
                 err = 'ProgressBar class does not support this container.'
                 err += ' Supported containers: tuple, list, dict, set.'
@@ -96,14 +89,14 @@ class ProgressBarPy2x(object):
         except IndexError:
             raise StopIteration
         self._print_bar()
-        self.index += 1
+        self._index += 1
         self._print_bar()
         return res
 
     def _print_bar(self):
         """ Prints to std current progress status and flushes output."""
 
-        progress = float(self.index) / float(self.initial_elements)
+        progress = float(self._index) / float(self._initial_elements)
         prog_sig = self._bar_style_progress * int(progress * self._bar_length)
         left_sig = self._bar_style_left * (self._bar_length - len(prog_sig))
         ending = ''
@@ -129,8 +122,8 @@ class ProgressBarPy2x(object):
         """
 
         if args:
-            print 'Please provide setup arguments only with keyword args.'
-            raise AttributeError
+            err = 'Please provide setup arguments only with keyword args.'
+            raise AttributeError(err)
 
         # --- validate provided key words arguments values:
         if 'len' in kwargs:
@@ -223,7 +216,7 @@ class AvgTime(object):
 class OrderedDefaultDict(collections.OrderedDict, collections.defaultdict):
     """
     A mix of OrderedDict and defaultdict from collections module. Uses fact that defaultdict is higher in MRO
-    than OrderedDict (baseclass) which __init__ is only used.
+    than OrderedDict (base class) from which __init__ is only used.
     """
     def __init__(self, default_factory=None, *args, **kwargs):
         super(OrderedDefaultDict, self).__init__(*args, **kwargs)
@@ -506,7 +499,7 @@ class Printer(object):
         self.primitive_containers = [tuple, list, dict, set]
 
     def _limit_line_len(self, lin_str, shift=0):
-        if '\n' in lin_str.strip('\n'):
+        if '\n' in lin_str.strip():
             new_line_list = []
             line_list = lin_str.split('\n')
             _total_elements = len(line_list)
@@ -520,17 +513,17 @@ class Printer(object):
                 if ind < self._max_split_lines:
                     new_line_list.append(_lin)
                 else:
-                    new_line_list.append(str(shift * ' ') + '... [' + str(_total_elements - ind) + ' elements left]\n')
+                    new_line_list.append(str(shift * ' ') + '... [' + str(_total_elements - ind) + ' elements left]\n\n')
                     break
 
-            lin_str = '\n'.join(new_line_list)
+            lin_str = '\n'.join(new_line_list) + '\n'
         else:
             if len(lin_str) > self._max_line_size:
                 new_line = ''
                 for cha in lin_str:
                     if len(new_line) < self._max_line_size:
                         new_line += cha
-                lin_str = new_line.strip() + ' ...\n'
+                lin_str = new_line + ' ...\n'
         return lin_str
 
     def show(self, iterable):
@@ -543,14 +536,13 @@ class Printer(object):
             raise NotImplementedError(err)
 
         if issubclass(typ, list) or issubclass(typ, tuple) or issubclass(typ, set) or \
-                (issubclass(typ, dict) is False and hasattr(iterable, '__iter__')):
+                (issubclass(typ, dict) is False or hasattr(iterable, '__iter__')):
             _tab_size = 12
             _tab_type = 15
             write('\n')
             ind = 'index'
             val = 'value'
             if self._ind_elem is not None:
-                ind = self._ind_elem
                 try:
                     max_t_size = max([len(getattr(x, self._ind_elem)) for x in iterable])
                 except AttributeError:
@@ -561,14 +553,14 @@ class Printer(object):
             if self._attr_elem is not None:
                 val = self._attr_elem
             if self._type:
-                header_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<14} {2:<12}\n\n').format(ind, 'type', val)
+                header_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<14}  {2:<14}\n\n').format(ind, 'type', val)
             else:
-                header_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<12}\n\n').format(ind, val)
+                header_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<14}\n\n').format(ind, val)
 
             write(header_str)
-            for indx, elem in enumerate(iterable):
+            for iter_ind, elem in enumerate(iterable):
                 if self._ind_elem is None:
-                    ind = indx
+                    ind = iter_ind
                 else:
                     try:
                         ind = getattr(elem, self._ind_elem)
@@ -589,19 +581,19 @@ class Printer(object):
                         if self._type:
                             if len(tp) > 15:
                                 _tab_type = len(tp)
-                            element = str(',\n' + ' ' * (_tab_size + _tab_type + 6)).join([str(x) for x in element])
+                            element = str(',\n' + ' ' * (_tab_size + _tab_type + 7)).join([str(x) for x in element])
                         else:
                             element = str(',\n' + ' ' * (_tab_size + 6)).join([str(x) for x in element])
                     else:
                         element = ', '.join([str(x) for x in element])
                 if self._type:
                     lin_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<' + str(_tab_type) +
-                                  '}{2:<12}\n').format(str(ind), tp, str(element))
-                    lin_str = self._limit_line_len(lin_str, _tab_size + _tab_type + 6)
+                                  '} {2:<14}\n').format(str(ind), tp, str(element))
+                    lin_str = self._limit_line_len(lin_str, _tab_size + _tab_type + 7)
                 else:
-                    lin_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<12}\n').format(str(ind), str(element))
+                    lin_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<14}\n').format(str(ind), str(element))
                     lin_str = self._limit_line_len(lin_str, _tab_size + 6)
-                if ind < self._max_lines:
+                if iter_ind < self._max_lines:
                     write(lin_str)
                 else:
                     write('...')
@@ -616,9 +608,9 @@ class Printer(object):
                 _tab_size = max_t_size + 2
             if self._type:
                 header_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<' + str(_tab_type) +
-                                 '} {2:<12}\n\n').format('key', 'type', 'value')
+                                 '} {2:<14}\n\n').format('key', 'type', 'value')
             else:
-                header_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<12}\n\n').format('key', 'value')
+                header_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<14}\n\n').format('key', 'value')
             write(header_str)
             count = 0
             for key, val in iterable.items():
@@ -626,9 +618,9 @@ class Printer(object):
                 if isinstance(val, list) or isinstance(val, tuple):
                     val = ', '.join([str(x) for x in val])
                 if self._type:
-                    lin_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<14} {2:<12}\n').format(str(key), tp, str(val))
+                    lin_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<14} {2:<14}\n').format(str(key), tp, str(val))
                 else:
-                    lin_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<12}\n').format(str(key), str(val))
+                    lin_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<14}\n').format(str(key), str(val))
                 lin_str = self._limit_line_len(lin_str)
                 if count < self._max_lines:
                     write(lin_str)
