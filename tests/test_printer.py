@@ -39,6 +39,9 @@ class CustomContainer(object):
 
 
 class TestProgressBar(unittest.TestCase):
+    """
+    Those tests are validated by eyes... yeah, kind of weird but I'm tired with that...
+    """
     def test_int(self):
         test_int = 1
         err = 'Container not supported, please use for tuple, list, dict, set or any other __iter__'
@@ -48,8 +51,6 @@ class TestProgressBar(unittest.TestCase):
 
     def test_list(self):
         test_list = [1, 2, 'b', 'c', 5, 8]
-        #out = StringIO()
-        #tprint(test_list, stream=out)
         tprint(test_list)
 
     def test_list_of_objects(self):

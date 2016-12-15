@@ -84,8 +84,8 @@ class ProgressBarPy2x(object):
                 res = list(self._data)[self._index]
             else:
                 err = 'ProgressBar class does not support this container.'
-                err += ' Supported containers: tuple, list, dict, set.'
-                raise NotImplemented(err)
+                err += ' Container must be subclass of tuple, list, dict or set.'
+                raise TypeError(err)
         except IndexError:
             raise StopIteration
         self._print_bar()
@@ -95,7 +95,6 @@ class ProgressBarPy2x(object):
 
     def _print_bar(self):
         """ Prints to std current progress status and flushes output."""
-
         progress = float(self._index) / float(self._initial_elements)
         prog_sig = self._bar_style_progress * int(progress * self._bar_length)
         left_sig = self._bar_style_left * (self._bar_length - len(prog_sig))
@@ -103,8 +102,9 @@ class ProgressBarPy2x(object):
         if progress == 1:
             # --- add new line sign if progress == 100%.
             ending = '\n'
-        sys.stdout.write(
-            "\rProgress: [{0}] {1}% {2}".format(prog_sig + left_sig, round(progress * 100), self.custom_text) + ending)
+        sys.stdout.write("\rProgress: [{0}] {1}% {2}".format(prog_sig + left_sig,
+                                                             round(progress * 100),
+                                                             self.custom_text) + ending)
         sys.stdout.flush()
 
     @classmethod
@@ -215,8 +215,8 @@ class AvgTime(object):
 
 class OrderedDefaultDict(collections.OrderedDict, collections.defaultdict):
     """
-    A mix of OrderedDict and defaultdict from collections module. Uses fact that defaultdict is higher in MRO
-    than OrderedDict (base class) from which __init__ is only used.
+    A mix of ``OrderedDict`` and ``defaultdict`` from ``collections`` module. Uses fact that ``defaultdict`` is higher
+    in MROv than ``OrderedDict`` (base class) from which __init__ is only used.
     """
     def __init__(self, default_factory=None, *args, **kwargs):
         super(OrderedDefaultDict, self).__init__(*args, **kwargs)
@@ -224,7 +224,10 @@ class OrderedDefaultDict(collections.OrderedDict, collections.defaultdict):
 
 
 class GetFunctionsStatsMeta(type):
-    """ Metaclass for counting number of GetFunctionStats calls and registering gen_report methods using atexit."""
+    """
+    Metaclass for counting number of ``GetFunctionStats`` calls, uses ``atexit`` to execute ``gen_report``
+    when script ends. For more details view ``atexit``.
+    """
     num_of_instances = 0
 
     def __call__(cls, *args, **kwargs):
@@ -297,9 +300,9 @@ class GetFunctionStatsPy2x(object):
     def _register_args(cls, fn_name, *args, **kwargs):
         """
         Sets arguments and key-worded argument calls and count them. Used to gather statistics
-        which arguments where the most frequent. If (kw)argument is a number (int, float, complex), string or boolean
-        it will memorize it directly. If an (kw)argument is any other type it will only store it's type name among with
-        it's size.
+        which arguments where the most frequent. If (kw)argument is a number (int, float, complex),
+        string or boolean it will memorize it directly. If an (kw)argument is any other type it will only store
+        it's type name among with it's size.
         """
 
         for ind, arg in enumerate(args):
@@ -331,10 +334,10 @@ class GetFunctionStatsPy2x(object):
     @classmethod
     def gen_report(cls, std_out=True):
         """
-        Generates reports by default generated to stdout. It can be redirected to file by setting std_out to False
-        during method calls. Methods is also register with atexit.register so it is automatically called when
-        sys.exit() is being called (does not apply when python's interpreter is killed by a signal. For more information
-        see atexit module documentation.
+        Generates reports with function stats (by default generated to stdout). It can be redirected to a file by
+        setting ``std_out`` to False during method calls. Methods is also registered with ``atexit`` so it is
+        automatically called when sys.exit() is being called (does not apply when python's interpreter is killed
+        by a signal. For more information see ``atexit`` module documentation.
         """
         to_write = []
         for fn in cls.list_of_fn_names:
@@ -406,7 +409,7 @@ def c_print_py2x(text):
     """
 
     abb_dict = {'bk': 'black', 'r': 'red', 'g': 'green', 'o': 'orange', 'b': 'blue', 'p': 'purple'}
-    abb_dict.update({'c': 'cyan', 'y': 'yellow', 'pk': 'pink'})  # PEP8!
+    abb_dict.update({'c': 'cyan', 'y': 'yellow', 'pk': 'pink'})
     for abb, val in abb_dict.items():
         regex = r'<' + abb + '>.+<\/' + abb + '>'
         if len(re.findall(regex, text, flags=re.IGNORECASE)) != 0:
@@ -414,9 +417,9 @@ def c_print_py2x(text):
     sys.stdout.write(str(text) + '\n')
 
 
-def std_out2file_py2x(fn):
+def out2file_py2x(fn):
     """
-    Redirect std_out and std_err from decorated function to file but still writes all data to output
+    Redirects std_out and std_err from decorated function to file but still writes all data to std/err output
 
     USAGE:
     ======
@@ -449,12 +452,10 @@ def std_out2file_py2x(fn):
         sys.stderr = old_stderr
         sys.stdout = old_stdout
         sys.stdout.write(std_content)
-        sys.stdout.write(err_content)
-        if os.path.exists(std_err_fil_name):
-            if os.path.getsize(std_err_fil_name) == 0:
-                os.remove(std_err_fil_name)
+        sys.stderr.write(err_content)
+        if os.path.getsize(std_err_fil_name) == 0:
+            os.remove(std_err_fil_name)
         return returned
-
     return wrapper
 
 

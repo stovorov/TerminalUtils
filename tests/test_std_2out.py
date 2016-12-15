@@ -7,15 +7,17 @@ import unittest
 
 sys.path.append('..')
 
-from TerminalUtils import std_out2file
+from TerminalUtils import out2file
 
 
 class TestStd2OutFile(unittest.TestCase):
-    @std_out2file
-    def test_one(self):
-        print 'TEST'
-        print 'TEST2'
+    @out2file
+    def test_std_out(self):
+        sys.stdout.write('TEST')
 
+    @out2file
+    def test_std_err(self):
+        sys.stderr.write('TEST')
 
 if __name__ == '__main__':
     unittest.main()
