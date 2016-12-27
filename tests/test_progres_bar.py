@@ -27,10 +27,10 @@ class CustomContainer(object):
 class TestProgressBar(unittest.TestCase):
     def test_setup_correct(self):
         print 'testing setup method'
-        Bar.setup(len=50, progress_style="+", left_style=" ")
+        Bar.setup(len=50, progress_style="+", left_style="-")
         self.assertEqual(Bar._bar_length, 50)
         self.assertEqual(Bar._bar_style_progress, "+")
-        self.assertEqual(Bar._bar_style_left, ' ')
+        self.assertEqual(Bar._bar_style_left, '-')
 
     def test_setup_wrong_len_arg(self):
         print 'testing setup wrong len arg'

@@ -128,17 +128,17 @@ class ProgressBarPy2x(object):
         # --- validate provided key words arguments values:
         if 'len' in kwargs:
             if type(kwargs['len']) != int or kwargs['len'] < 1:
-                raise TypeError('Please check type and length or argument')
+                raise TypeError('Please argument "len"')
             cls._bar_length = kwargs['len']
 
         if 'progress_style' in kwargs:
             if type(kwargs['progress_style']) != str or len(kwargs['progress_style']) > 1:
-                raise TypeError('Please check type and length or argument')
+                raise TypeError('Please argument "progress_style"')
             cls._bar_style_progress = kwargs['progress_style']
 
         if 'left_style' in kwargs:
             if type(kwargs['left_style']) != str or len(kwargs['left_style']) > 1:
-                raise TypeError('Please check type and length or argument')
+                raise TypeError('Please argument "left_style"')
             cls._bar_style_left = kwargs['left_style']
 
     @classmethod
@@ -191,9 +191,7 @@ class AvgTimeDesc(object):
         self.values = weakref.WeakKeyDictionary()
 
     def __get__(self, instance, objtype):
-        if len(self.values.get(instance)) is None:
-            return 0
-        return float(sum(self.values.get(instance))) / float(len(self.values.get(instance)))
+        return float(sum(self.values.get(instance, 0))) / float(len(self.values.get(instance, 0)))
 
     def __set__(self, instance, val):
         if self.values.get(instance) is None:
@@ -216,7 +214,7 @@ class AvgTime(object):
 class OrderedDefaultDict(collections.OrderedDict, collections.defaultdict):
     """
     A mix of ``OrderedDict`` and ``defaultdict`` from ``collections`` module. Uses fact that ``defaultdict`` is higher
-    in MROv than ``OrderedDict`` (base class) from which __init__ is only used.
+    in MRO than ``OrderedDict`` (base class) from which __init__ is only used.
     """
     def __init__(self, default_factory=None, *args, **kwargs):
         super(OrderedDefaultDict, self).__init__(*args, **kwargs)
@@ -429,7 +427,7 @@ def out2file_py2x(fn):
     >>	   print 'test'
 
     Two new files are created - some_function_stdout.txt and some_function_stderr.txt.
-    If stderr file is empty it is instantly removed.
+    If std_err file is empty it is instantly removed.
     """
 
     @functools.wraps(fn)
@@ -514,7 +512,7 @@ class Printer(object):
                 if ind < self._max_split_lines:
                     new_line_list.append(_lin)
                 else:
-                    new_line_list.append(str(shift * ' ') + '... [' + str(_total_elements - ind) + ' elements left]\n\n')
+                    new_line_list.append(str(shift*' ') + '... [' + str(_total_elements - ind) + ' elements left]\n\n')
                     break
 
             lin_str = '\n'.join(new_line_list) + '\n'
@@ -531,13 +529,11 @@ class Printer(object):
         typ = type(iterable)
         write = self._stream.write
 
-        if not filter(lambda arg: issubclass(typ, arg), self.primitive_containers) and \
-                hasattr(iterable, '__iter__') is False:
+        if not filter(lambda arg: issubclass(typ, arg), self.primitive_containers) \
+                or hasattr(iterable, '__iter__') is False:
             err = 'Container not supported, please use for tuple, list, dict, set or any other __iter__'
-            raise NotImplementedError(err)
-
-        if issubclass(typ, list) or issubclass(typ, tuple) or issubclass(typ, set) or \
-                (issubclass(typ, dict) is False or hasattr(iterable, '__iter__')):
+            raise TypeError(err)
+        else:
             _tab_size = 12
             _tab_type = 15
             write('\n')
@@ -547,7 +543,7 @@ class Printer(object):
                 try:
                     max_t_size = max([len(getattr(x, self._ind_elem)) for x in iterable])
                 except AttributeError:
-                    err = 'Could not find argument ' + str(self._ind_elem) + ' in iterable element.'
+                    err = 'Could not find argument "' + str(self._ind_elem) + '" in iterable element.'
                     raise AttributeError(err)
                 if max_t_size > _tab_size:
                     _tab_size = max_t_size + 2
@@ -557,17 +553,12 @@ class Printer(object):
                 header_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<14}  {2:<14}\n\n').format(ind, 'type', val)
             else:
                 header_str = str('{0:>' + str(_tab_size) + '}  ->  {1:<14}\n\n').format(ind, val)
-
             write(header_str)
             for iter_ind, elem in enumerate(iterable):
                 if self._ind_elem is None:
                     ind = iter_ind
                 else:
-                    try:
-                        ind = getattr(elem, self._ind_elem)
-                    except AttributeError:
-                        err = 'Could not find argument ' + str(self._ind_elem) + ' in iterable element.'
-                        raise AttributeError(err)
+                    ind = getattr(elem, self._ind_elem)
                 if self._attr_elem is None:
                     element = elem
                 else:
@@ -580,8 +571,6 @@ class Printer(object):
                 if isinstance(element, list) or isinstance(element, tuple):
                     if self._split:
                         if self._type:
-                            if len(tp) > 15:
-                                _tab_type = len(tp)
                             element = str(',\n' + ' ' * (_tab_size + _tab_type + 7)).join([str(x) for x in element])
                         else:
                             element = str(',\n' + ' ' * (_tab_size + 6)).join([str(x) for x in element])
@@ -597,7 +586,7 @@ class Printer(object):
                 if iter_ind < self._max_lines:
                     write(lin_str)
                 else:
-                    write('...')
+                    write(str('{0:>' + str(_tab_size) + '}').format('...'))
                     break
             write('\n')
 
@@ -626,7 +615,7 @@ class Printer(object):
                 if count < self._max_lines:
                     write(lin_str)
                 else:
-                    write('...')
+                    write(str('{0:>' + str(_tab_size) + '}').format('...'))
                     break
                 count += 1
             write('\n')
