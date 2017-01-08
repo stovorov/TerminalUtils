@@ -533,9 +533,11 @@ class Printer(object):
                 or hasattr(iterable, '__iter__') is False:
             err = 'Container not supported, please use for tuple, list, dict, set or any other __iter__'
             raise TypeError(err)
-        else:
-            _tab_size = 12
-            _tab_type = 15
+
+        _tab_size = 12
+        _tab_type = 15
+
+        if issubclass(typ, list) or issubclass(typ, tuple) or issubclass(typ, set):
             write('\n')
             ind = 'index'
             val = 'value'
@@ -591,8 +593,7 @@ class Printer(object):
             write('\n')
 
         if issubclass(typ, dict):
-            _tab_size = 12
-            _tab_type = 15
+            write('\n')
             max_t_size = max([len(str(x)) for x in iterable])
             if max_t_size > _tab_size:
                 _tab_size = max_t_size + 2
