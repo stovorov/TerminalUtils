@@ -8,7 +8,11 @@ import unittest
 
 sys.path.append('..')
 
-from cStringIO import StringIO
+try:
+    from cStringIO import StringIO
+except ImportError:
+    # for python3
+    from io import StringIO
 from TerminalUtils import c_print
 
 

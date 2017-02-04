@@ -19,7 +19,7 @@ import sys
 import time
 import weakref
 
-import cStringIO as StringIO
+from cStringIO import StringIO
 
 
 class ProgressBarPy2x(object):
@@ -124,7 +124,6 @@ class ProgressBarPy2x(object):
         if args:
             err = 'Please provide setup arguments only with keyword args.'
             raise AttributeError(err)
-
         # --- validate provided key words arguments values:
         if 'len' in kwargs:
             if type(kwargs['len']) != int or kwargs['len'] < 1:
@@ -436,8 +435,8 @@ def out2file_py2x(fn):
         std_err_fil_name = fn.__name__ + '_stderr.txt'
         old_stderr = sys.stderr
         old_stdout = sys.stdout
-        sys.stdout = StringIO.StringIO()
-        sys.stderr = StringIO.StringIO()
+        sys.stdout = StringIO()
+        sys.stderr = StringIO()
         try:
             returned = fn(*args, **kwargs)
         finally:

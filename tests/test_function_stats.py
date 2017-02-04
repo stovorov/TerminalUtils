@@ -28,7 +28,7 @@ class TestFunctionStats(unittest.TestCase):
             os.system('rm -rf ./FunctionStats.txt')
 
     def test_gen_rep2fil(self):
-        print 'Test GetFunctionStats #1'
+        print('Test GetFunctionStats #1')
 
         @GetFunctionStats
         def _tst(*args, **kwargs):
@@ -38,7 +38,7 @@ class TestFunctionStats(unittest.TestCase):
         def _tst2(*args, **kwargs):
             time.sleep(random.random())
 
-        for x in xrange(10):
+        for x in range(10):
             some_val = [1, 2, 3]
             some_val2 = 6
             some_val3 = SomeClass()
@@ -51,7 +51,7 @@ class TestFunctionStats(unittest.TestCase):
         self.assertTrue(os.path.exists('./FunctionStats.txt'))
 
     def test_gen_rep2std(self):
-        print 'Test GetFunctionStats #2'
+        print('Test GetFunctionStats #2')
 
         @GetFunctionStats
         def _tst(*args, **kwargs):
@@ -61,7 +61,7 @@ class TestFunctionStats(unittest.TestCase):
         def _tst2(*args, **kwargs):
             time.sleep(random.random())
 
-        for x in xrange(10):
+        for x in range(10):
             some_val = [1, 2, 3]
             some_val2 = 6
             some_val3 = SomeClass()

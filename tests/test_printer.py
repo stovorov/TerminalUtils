@@ -4,10 +4,13 @@ Module contains unit tests for c_print function.
 
 import sys
 import unittest
-from cStringIO import StringIO
+
+if sys.version_info >= (3,):
+    from io import StringIO
+else:
+    from cStringIO import StringIO
 
 sys.path.append('..')
-
 from TerminalUtils import tprint
 
 
@@ -43,7 +46,7 @@ class TestProgressBar(unittest.TestCase):
     Those tests are validated by eyes... yeah, kind of weird but I'm tired with that...
     """
     def test_int(self):
-        print 'testing int'
+        sys.stdout.write('testing int')
         test_int = 1
         err = 'Container not supported, please use for tuple, list, dict, set or any other __iter__'
         with self.assertRaises(Exception) as context:
@@ -51,61 +54,73 @@ class TestProgressBar(unittest.TestCase):
         self.assertTrue(err in context.exception)
 
     def test_list(self):
-        print 'testing list'
+        sys.stdout.write('testing list')
         test_list = [1, 2, 'b', 'c', 5, 8]
         tprint(test_list)
 
     def test_list_of_objects(self):
-        print 'testing list of objects'
+        sys.stdout.write('testing list of objects')
         test_list = [[CustomPoint(), CustomPoint(), CustomPoint(), CustomPoint()], [1, 2, 3]]
         tprint(test_list)
 
     def test_list_of_objects_split(self):
-        print 'testing list of objects, split view'
+        sys.stdout.write('testing list of objects, split view')
         test_list = [[(CustomPoint(), CustomPoint(), CustomPoint(), CustomPoint()),
                       (CustomPoint(), CustomPoint(), CustomPoint(), CustomPoint())], [1, 2, 3]]
         tprint(test_list, split=True)
 
     def test_list2(self):
-        print 'testing list'
+        sys.stdout.write('testing list')
         test_list = [[1, 2, 'b', 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8], ['c', 5, 8], [5, 1, 4]]
         tprint(test_list)
 
     def test_tuple(self):
-        print 'testing tuple'
+        sys.stdout.write('testing tuple')
         test_tuple = (1, 2, 3, 4, 5)
         tprint(test_tuple)
 
     def test_tuple2(self):
-        print 'testing tuple2'
+        sys.stdout.write('testing tuple2')
         test_tuple = ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], [0, 2, 3, 4], [1, 2, 3, 4, 5, 6, 7, 8, 9])
         tprint(test_tuple)
 
     def test_dict(self):
-        print 'testing dict'
+        sys.stdout.write('testing dict')
         test_dict = {'A-key': '100', 'B-key': '200', 'C-key': (1, 2), 'D-key': '150'}
         tprint(test_dict)
 
     def test_dict2(self):
-        print 'testing dict2'
+        sys.stdout.write('testing dict2')
         test_dict = {'A-key': [1, 2, 'b', 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8],
                      'B-key': '200', 'C-key': (1, 2), 'D-key': '150'}
         tprint(test_dict)
 
+    def test_dict_no_typed(self):
+        sys.stdout.write('testing dict without typing')
+        test_dict = {'A-key': [1, 2, 'b', 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8],
+                     'B-key': '200', 'C-key': (1, 2), 'D-key': '150'}
+        tprint(test_dict, typed=False)
+
+    def test_dict_very_long_keys(self):
+        sys.stdout.write('testing dict without typing')
+        test_dict = {'A-key': [1, 2, 'b', 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8],
+                     'B-key': '200', 'C-key': (1, 2), 'ThisIsJustSomeVeryLongKeyName': '150'}
+        tprint(test_dict, typed=False)
+
     def test_set(self):
-        print 'testing set'
+        sys.stdout.write('testing set')
         test_list = [6, 6, 7, 8, 9, 10, 11]
         test_set = set(test_list)
         tprint(test_set)
 
     def test_set2(self):
-        print 'testing set2'
+        sys.stdout.write('testing set2')
         test_list = [(6, 6, 7, 8, 9, 10, 11) * 2, (6, 6, 7, 8, 9, 10, 11), (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)]
         test_set = set(test_list)
         tprint(test_set)
 
     def test_custom_container(self):
-        print 'testing custom containers'
+        sys.stdout.write('testing custom containers')
         ob1 = CustomContainer()
         ob2 = CustomContainer()
         ob3 = CustomContainer()
@@ -119,46 +134,46 @@ class TestProgressBar(unittest.TestCase):
         tprint(test_container, typed=False, ind_elem='val1', attr_elem='val2')
 
     def test_long_string_typed_false(self):
-        print 'testing long string, no type info'
+        sys.stdout.write('testing long string, no type info')
         test_list = [('just_some_long_string_eg_could_be_a_path_to_file_stored_somewhere...',
-                    'yet_another_long_string_which_could_be_part_of_a_something_loooooonnnnnngggggg',
-                    'yet_another_long_string_which_could_be_part_of_a_something_loooooonnnnnngggggg',
-                    'yet_another_long_string_which_could_be_part_of_a_something_loooooonnnnnngggggg',
-                    'yet_another_long_string_which_could_be_part_of_a_something_loooooonnnnnngggggg',
-                    'yet_another_long_string_which_could_be_part_of_a_something_loooooonnnnnngggggg')]
+                      'yet_another_long_string_which_could_be_part_of_a_something_loooooonnnnnngggggg',
+                      'yet_another_long_string_which_could_be_part_of_a_something_loooooonnnnnngggggg',
+                      'yet_another_long_string_which_could_be_part_of_a_something_loooooonnnnnngggggg',
+                      'yet_another_long_string_which_could_be_part_of_a_something_loooooonnnnnngggggg',
+                      'yet_another_long_string_which_could_be_part_of_a_something_loooooonnnnnngggggg')]
         tprint(test_list, split=True, line_len=120, typed=False)
 
     def test_long_string_typed_default(self):
-        print 'testing long string, type info'
+        sys.stdout.write('testing long string, type info')
         test_list = [('just_some_long_string_eg_could_be_a_path_to_file_stored_somewhere...',
-                    'yet_another_long_string_which_could_be_part_of_a_something_loooooonnnnnngggggg',
-                    'and_another_fancy_long_string_here_pointing_somewhere',
-                    'and_another_fancy_long_string_here_pointing_somewhere',
-                    'and_another_fancy_long_string_here_pointing_somewhere',
-                    'and_another_fancy_long_string_here_pointing_somewhere')]
+                      'yet_another_long_string_which_could_be_part_of_a_something_loooooonnnnnngggggg',
+                      'and_another_fancy_long_string_here_pointing_somewhere',
+                      'and_another_fancy_long_string_here_pointing_somewhere',
+                      'and_another_fancy_long_string_here_pointing_somewhere',
+                      'and_another_fancy_long_string_here_pointing_somewhere')]
         tprint(test_list, split=True, line_len=200)
 
     def test_split(self):
-        print 'testing split option'
+        sys.stdout.write('testing split option')
         test_list = [(6, 6, 7, 8, 9, 10, 11) * 2, (6, 6, 7, 8, 9, 10, 11)]
         tprint(test_list, split=True)
 
     def test_custom_iterable(self):
-        print 'testing custom iterable'
+        sys.stdout.write('testing custom iterable')
         obj1 = CustomContainer()
         obj1.val1 = 'Some custom long name'
         obj1.val2 = [(6, 6, 7, 8, 9, 10, 11) * 2, (6, 6, 7, 8, 9, 10, 11)]
         tprint([obj1], split=True, line_len=120, typed=False, ind_elem='val1', attr_elem='val2')
 
     def test_stream(self):
-        print 'Testing stream output'
+        sys.stdout.write('Testing stream output')
         t_stream = StringIO()
         test_dict = {'A-key': '100', 'B-key': '200', 'C-key': (1, 2), 'D-key': '150'}
         tprint(test_dict, stream=t_stream)
         t_stream.getvalue()
 
     def test_wrong_arguments(self):
-        print 'Testing wrong arguments'
+        sys.stdout.write('Testing wrong arguments')
         err = 'Wrong type for argument.'
 
         try:
@@ -188,7 +203,7 @@ class TestProgressBar(unittest.TestCase):
 
     def test_proper_index_element(self):
         # purpose of this test is to check whether argument "ind_elem" works properly
-        print 'testing proper index element'
+        sys.stdout.write('testing proper index element')
         ob1 = CustomContainer()
         ob1.val1 = 'test'
         test_container = [ob1]
@@ -196,7 +211,7 @@ class TestProgressBar(unittest.TestCase):
 
     def test_wrong_index_element(self):
         # purpose of this test is to check whether when wrongly provided "ind_elem" AttributeError is raised
-        print 'testing wrong index element'
+        sys.stdout.write('testing wrong index element')
         ob1 = CustomContainer()
         ob1.val1 = 'test'
         test_container = [ob1]
@@ -208,7 +223,7 @@ class TestProgressBar(unittest.TestCase):
             self.assertTrue(e.message, err)
 
     def test_proper_attr_element(self):
-        print 'testing proper attribute element'
+        sys.stdout.write('testing proper attribute element')
         ob1 = CustomContainer()
         ob1.val1 = 'test'
         ob1.val2 = [(6, 6, 7, 8, 9, 10, 11) * 2, (6, 6, 7, 8, 9, 10, 11)]
@@ -216,7 +231,7 @@ class TestProgressBar(unittest.TestCase):
         tprint(test_container, typed=False, attr_elem='val2')
 
     def test_wrong_attr_element(self):
-        print 'testing proper attribute element'
+        sys.stdout.write('testing proper attribute element')
         ob1 = CustomContainer()
         ob1.val1 = 'test'
         test_container = [ob1]
@@ -227,7 +242,7 @@ class TestProgressBar(unittest.TestCase):
             self.assertTrue(e.message, err)
 
     def test_long_name(self):
-        print 'testing custom container with long name'
+        sys.stdout.write('testing custom container with long name')
         ob1 = CustomContainer()
         ob2 = CustomContainer()
         ob1.val1 = [(6, 6, 7, 8, 9, 10, 11) * 2, (6, 6, 7, 8, 9, 10, 11)]
@@ -237,13 +252,14 @@ class TestProgressBar(unittest.TestCase):
         tprint(test_container, split=True, typed=True)
 
     def test_max_lines_list(self):
-        print 'testing max lines setup list argument'
+        sys.stdout.write('testing max lines setup list argument')
         obj = [(6, 6, 7, 8, 9, 10, 11) * 2, (6, 6, 7, 8, 9, 10, 11), (6, 6, 7, 8, 9, 10, 11)]
         tprint(obj, max_lines=2)
 
     def test_max_lines_dict(self):
-        print 'testing max lines setup dict argument'
-
+        sys.stdout.write('testing max lines setup dict argument')
+        test_dict = {'A-key': '100', 'B-key': '200', 'C-key': (1, 2), 'D-key': '150'}
+        tprint(test_dict, max_lines=2)
 
 if __name__ == '__main__':
     unittest.main()
