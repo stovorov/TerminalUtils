@@ -15,8 +15,10 @@ It includes:
 Tested for Python 2.6 and 2.7. Python 3.x is currently unsupported.
 
 TODO:
-  1. 100% tests coverage (currently ~97%)  
-  2. Support for python 3.x
-  3. Add some of functionalities i keep in my mind...
+  1. Support for python 3.x
+  2. Add some of functionalities i keep in my mind...
+
+DONE:
+  1. Tests 100% for Python 2.x
 
 .. |Build-Status| image:: https://travis-ci.org/stovorov/TerminalUtils.svg?branch=master
